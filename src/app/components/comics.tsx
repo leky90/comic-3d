@@ -14,6 +14,7 @@ import {
 } from '../constants/app.constant';
 import { Comic as ComicEntity } from '../types/comic.model';
 import { motion } from 'framer-motion-3d';
+import { animate } from 'framer-motion';
 
 export function Comics() {
   const groupRef = useRef<Group>(null);
@@ -22,30 +23,51 @@ export function Comics() {
   const currentPage = params === null ? 1 : Number(params.page);
   const realPage = Math.ceil((currentPage + 1) / 3);
 
-  console.log('Comics', matchedComics, params);
-
   const handleMouseWheel = useCallback((event: WheelEvent) => {
-    // Increase or decrease the rotation speed by adjusting the constant value
-    const rotationSpeed = 0.1;
+    if (!groupRef.current) return;
+
     const deltaY = Math.sign(event.deltaY);
 
-    // Rotate the group around the Y axis
-    if (groupRef.current) {
-      groupRef.current.rotation.y += rotationSpeed * deltaY;
-    }
+    animate(groupRef.current.rotation.y, groupRef.current.rotation.y + deltaY, {
+      duration: 3,
+      onUpdate(latest) {
+        if (!groupRef.current) return;
+        groupRef.current.rotation.y = latest;
+      },
+    });
   }, []);
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (!groupRef.current) return;
-    // Increase or decrease the rotation speed by adjusting the constant value
-    const rotationSpeed = 0.25;
+
+    const deltaY = 0.5;
 
     switch (event.key) {
       case 'a':
-        groupRef.current.rotation.y -= rotationSpeed;
+        animate(
+          groupRef.current.rotation.y,
+          groupRef.current.rotation.y - deltaY,
+          {
+            duration: 3,
+            onUpdate(latest) {
+              if (!groupRef.current) return;
+              groupRef.current.rotation.y = latest;
+            },
+          }
+        );
         break;
       case 'd':
-        groupRef.current.rotation.y += rotationSpeed;
+        animate(
+          groupRef.current.rotation.y,
+          groupRef.current.rotation.y + deltaY,
+          {
+            duration: 3,
+            onUpdate(latest) {
+              if (!groupRef.current) return;
+              groupRef.current.rotation.y = latest;
+            },
+          }
+        );
         break;
 
       default:
@@ -93,7 +115,7 @@ export function Comics() {
 
       const x = R * Math.cos(angle);
       const z = R * Math.sin(angle);
-      const y = (round - 1) * ROUND_SPACE_Y + 1;
+      const y = (round - 1) * ROUND_SPACE_Y + 3;
 
       const inCurrentPage =
         round >= currentPage - 1 && round <= currentPage + 1;

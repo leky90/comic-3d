@@ -21,8 +21,6 @@ export function App() {
     { keepPreviousData: true }
   );
 
-  console.log('App', location, params);
-
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
       { name: Controls.forward, keys: ['ArrowUp', 'KeyW'] },

@@ -1,20 +1,20 @@
 import { SpriteAnimator, useCursor } from '@react-three/drei';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ROUTES } from '../constants/route.constant';
 import { Text2d } from './text2d';
 import { Group } from 'three';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
-import { ROUND_SPACE_Y } from '../constants/app.constant';
+import { ThreeEvent } from '@react-three/fiber';
 import { useHashLocation } from '../hooks/use-hash-location';
+import { ROUND_SPACE_Y } from '../constants/app.constant';
+import { animate } from 'framer-motion';
 
 type RecentComicsHeadingProps = { page: number };
 
-const BASE_HEADING_Y = 12;
+const BASE_HEADING_Y = 14;
 
 export function RecentComicsHeading({ page }: RecentComicsHeadingProps) {
-  const prevPage = useRef<number>(page);
   const groupRef = useRef<Group>(null);
-  const [location, setLocation] = useHashLocation();
+  const [, setLocation] = useHashLocation();
   const [hovered, hover] = useState(false);
   useCursor(hovered);
 
@@ -32,35 +32,18 @@ export function RecentComicsHeading({ page }: RecentComicsHeadingProps) {
     hover(false);
   }
 
-  useFrame(({ clock }) => {
-    if (!groupRef.current || !prevPage.current) return;
+  useEffect(() => {
+    if (!groupRef.current) return;
+    const newY = (page - 1) * ROUND_SPACE_Y + BASE_HEADING_Y;
 
-    if (prevPage.current === page) return;
-
-    if (prevPage.current > page) {
-      if (
-        groupRef.current.position.y <
-        (page - 1) * ROUND_SPACE_Y + BASE_HEADING_Y
-      ) {
-        prevPage.current = page;
-        groupRef.current.position.y =
-          (page - 1) * ROUND_SPACE_Y + BASE_HEADING_Y;
-      } else {
-        groupRef.current.position.y -= clock.getElapsedTime();
-      }
-    } else {
-      if (
-        groupRef.current.position.y >=
-        (page - 1) * ROUND_SPACE_Y + BASE_HEADING_Y
-      ) {
-        prevPage.current = page;
-        groupRef.current.position.y =
-          (page - 1) * ROUND_SPACE_Y + BASE_HEADING_Y;
-      } else {
-        groupRef.current.position.y += clock.getElapsedTime();
-      }
-    }
-  });
+    animate(groupRef.current.position.y, newY, {
+      duration: 1,
+      onUpdate(latest) {
+        if (!groupRef.current) return;
+        groupRef.current.position.y = latest;
+      },
+    });
+  }, [page]);
 
   return (
     <group
@@ -93,7 +76,7 @@ export function RecentComicsHeading({ page }: RecentComicsHeadingProps) {
         ^ Mới cập nhật ^ ({page}) <meshNormalMaterial />
       </Text2d>
 
-      <pointLight visible={hovered} intensity={1} />
+      <pointLight visible={hovered} intensity={0.25} />
     </group>
   );
 }

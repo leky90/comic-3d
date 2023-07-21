@@ -59,7 +59,7 @@ export function CameraControl({
       setTimeout(() => {
         changeCameraPosition(location);
         firstAccess.current = false;
-      }, 2000);
+      }, 500);
     } else {
       changeCameraPosition(location);
     }

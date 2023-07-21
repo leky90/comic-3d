@@ -8,11 +8,12 @@ import {
   Vector3,
 } from 'three';
 import type { Comic as ComicEntity } from '../types/comic.model';
-import { Box, Sparkles, useCursor, useTexture } from '@react-three/drei';
+import { Box, useCursor, useTexture } from '@react-three/drei';
 import { ROUTES } from '../constants/route.constant';
 import { Chapter } from './chapter';
 import { Text2d } from './text2d';
 import { useHashLocation } from '../hooks/use-hash-location';
+import { motion } from 'framer-motion-3d';
 
 type ComicProps = MeshProps & {
   enabled: boolean;
@@ -91,6 +92,11 @@ export const Comic = memo(
       hover(false);
     }
 
+    const boxVariants = {
+      idle: { scale: 1 },
+      hovered: { scale: 1.2 },
+    };
+
     return (
       <group
         position={[basePosition.x, basePosition.y, basePosition.z]}
@@ -98,25 +104,31 @@ export const Comic = memo(
         ref={groupRef}
         visible={enabled}
       >
-        <Sparkles visible={hovered} count={30} scale={10} size={20} speed={4} />
-        <Text2d visible={enabled} position={[0, -6, 2] as unknown as Vector3}>
-          {comic.title.slice(0, 24)} {comic.title.length > 24 && '...'}
-          <meshPhongMaterial color="#FFC300" />
-        </Text2d>
-        <Box
-          ref={boxRef}
-          args={[7.35, 10, 1]}
-          onClick={onClick}
-          onPointerOver={onPointerEnter}
-          onPointerOut={handlePointerLeave}
-          material={BOX_COLOR_MATERIAL}
-        />
-        <Text2d visible={enabled} position={[0, 6, 2] as unknown as Vector3}>
-          {comic.updated_at}
-          <meshPhongMaterial color="royalblue" />
-        </Text2d>
+        <motion.group
+          variants={boxVariants}
+          initial={'idle'}
+          animate={hovered ? 'hovered' : 'idle'}
+        >
+          <Text2d visible={enabled} position={[0, -6, 2] as unknown as Vector3}>
+            {comic.title.slice(0, 24)} {comic.title.length > 24 && '...'}
+            <meshPhongMaterial color="#FFC300" />
+          </Text2d>
+          <Box
+            ref={boxRef}
+            args={[7.35, 10, 1]}
+            onClick={onClick}
+            onPointerOver={onPointerEnter}
+            onPointerOut={handlePointerLeave}
+            material={BOX_COLOR_MATERIAL}
+          />
+          <Text2d visible={enabled} position={[0, 6, 2] as unknown as Vector3}>
+            {comic.updated_at}
+            <meshPhongMaterial color="royalblue" />
+          </Text2d>
 
-        {latestChapters}
+          {latestChapters}
+        </motion.group>
+
         <pointLight visible={hovered} intensity={0.1} position={[0, 0, 5]} />
       </group>
     );

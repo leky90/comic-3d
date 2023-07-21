@@ -1,1 +1,88 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #191920;
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+.text-white {
+  background-color: rgba(#fff, 0.15);
+  border-radius: 40px;
+  padding: 12px;
+  font-size: 32px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.comic-info {
+  background-color: rgba(#000000, 0.5);
+  font-weight: bold;
+  color: yellow;
+  padding: 40px;
+  border-radius: 40px;
+  width: 720px;
+  font-size: 100px;
+}
+
+.back-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(#000000, 0.5);
+  font-weight: bold;
+  color: yellow;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 24px;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.white-button {
+  position: fixed;
+  background-color: rgba(#000000, 0.5);
+  font-weight: bold;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 24px;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.rotate-a {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.rotate-d {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.rotate-w {
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+}
+
+.rotate-s {
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+}

@@ -5,7 +5,7 @@ import type { RecommendComic as RecommendComicEntity } from '../types/comic.mode
 import { Box, Html, Text as Text2D } from '@react-three/drei';
 import { Text } from './text';
 import { suspend } from 'suspend-react';
-import useLocation from 'wouter/use-location';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 type RecommendComicProps = MeshProps & {
   index: number;
@@ -24,7 +24,7 @@ export function RecommendComic({
   const basePosition = position as Vector3;
   const meshRef = useRef<Group>(null);
   const texture = useLoader(TextureLoader, comic.thumbnail);
-  const [, setLocation] = useLocation();
+  const [, setLocation] = useHashLocation();
   const [hovered, hover] = useState(false);
 
   function onPointerOver(e: ThreeEvent<MouseEvent>) {

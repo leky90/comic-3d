@@ -2,10 +2,10 @@ import { useCursor } from '@react-three/drei';
 import { Chapter as ChapterEntity } from '../types/comic.model';
 import { Vector3 } from 'three';
 import { useState } from 'react';
-import { useLocation } from 'wouter';
 import { ROUTES } from '../constants/route.constant';
 import { ThreeEvent } from '@react-three/fiber';
 import { Text2d } from './text2d';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 type ChaperProps = {
   position: Vector3;
@@ -15,7 +15,7 @@ type ChaperProps = {
 
 export function Chapter({ name, id, comicId, position }: ChaperProps) {
   const [hovered, hover] = useState(false);
-  const [, setLocation] = useLocation();
+  const [, setLocation] = useHashLocation();
   useCursor(hovered);
 
   function onClick(e: ThreeEvent<MouseEvent>) {

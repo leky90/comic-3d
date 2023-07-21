@@ -1,9 +1,9 @@
-import useLocation from 'wouter/use-location';
 import { ROUTES } from '../constants/route.constant';
 import { useRoute } from 'wouter';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 export function QuickButtonsStage() {
-  const [, setLocation] = useLocation();
+  const [, setLocation] = useHashLocation();
   const [matchedComics, params] = useRoute(ROUTES['comics-page']);
   const currentPage = params === null ? 1 : Number(params.page);
 

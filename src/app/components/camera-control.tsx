@@ -2,9 +2,9 @@ import { CameraControls } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useRef } from 'react';
 import { Quaternion, Vector3 } from 'three';
-import useLocation from 'wouter/use-location';
 import { ROUTES } from '../constants/route.constant';
 import { ROUND_SPACE_Y } from '../constants/app.constant';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 type CameraControlProps = {
   position?: Vector3;
@@ -17,7 +17,7 @@ export function CameraControl({
 }: CameraControlProps) {
   const firstAccess = useRef(true);
   const { controls } = useThree();
-  const [location] = useLocation();
+  const [location] = useHashLocation();
 
   const changeCameraPosition = useCallback(
     function (location: string) {

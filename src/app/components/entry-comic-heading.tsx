@@ -1,13 +1,13 @@
 import { Html, SpriteAnimator, useCursor } from '@react-three/drei';
 import { Text } from './text';
 import { useState } from 'react';
-import useLocation from 'wouter/use-location';
 import { ROUTES } from '../constants/route.constant';
 import { ThreeEvent } from '@react-three/fiber';
 import { motion } from 'framer-motion-3d';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 export function EntryComicHeading() {
-  const [location, setLocation] = useLocation();
+  const [location, setLocation] = useHashLocation();
   const [hovered, hover] = useState(false);
   useCursor(hovered);
 

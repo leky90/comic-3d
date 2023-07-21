@@ -22,6 +22,8 @@ export function Comics() {
   const currentPage = params === null ? 1 : Number(params.page);
   const realPage = Math.ceil((currentPage + 1) / 3);
 
+  console.log('Comics', matchedComics, params);
+
   const handleMouseWheel = useCallback((event: WheelEvent) => {
     // Increase or decrease the rotation speed by adjusting the constant value
     const rotationSpeed = 0.1;

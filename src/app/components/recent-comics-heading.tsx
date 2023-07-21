@@ -1,11 +1,11 @@
 import { SpriteAnimator, useCursor } from '@react-three/drei';
 import { useRef, useState } from 'react';
-import useLocation from 'wouter/use-location';
 import { ROUTES } from '../constants/route.constant';
 import { Text2d } from './text2d';
 import { Group } from 'three';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { ROUND_SPACE_Y } from '../constants/app.constant';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 type RecentComicsHeadingProps = { page: number };
 
@@ -14,7 +14,7 @@ const BASE_HEADING_Y = 12;
 export function RecentComicsHeading({ page }: RecentComicsHeadingProps) {
   const prevPage = useRef<number>(page);
   const groupRef = useRef<Group>(null);
-  const [location, setLocation] = useLocation();
+  const [location, setLocation] = useHashLocation();
   const [hovered, hover] = useState(false);
   useCursor(hovered);
 

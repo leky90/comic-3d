@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useLocation, useRoute } from 'wouter';
+import { useRoute } from 'wouter';
 import { AppContainer } from './components/app-container';
 import { QuickButtonsStage } from './components/quick-buttons-stage';
 import { useGetComicsByTypeQuery } from './services/use-get-comics-by-type';
@@ -7,9 +7,10 @@ import { ROUTES } from './constants/route.constant';
 import { KeyboardControls, KeyboardControlsEntry } from '@react-three/drei';
 import { Controls } from './types/keyboard.type';
 import { useEffect, useMemo, useRef } from 'react';
+import { useHashLocation } from './hooks/use-hash-location';
 
 export function App() {
-  const [location, setLocation] = useLocation();
+  const [location, setLocation] = useHashLocation();
   const [isComicPage, params] = useRoute(ROUTES['comics-page']);
   const currentPage = useRef(params === null ? 1 : Number(params.page));
   const { isSuccess } = useGetComicsByTypeQuery(
@@ -19,6 +20,8 @@ export function App() {
     },
     { keepPreviousData: true }
   );
+
+  console.log('App', location, params);
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
@@ -68,7 +71,7 @@ export function App() {
 
   useEffect(() => {
     currentPage.current = params === null ? 1 : Number(params.page);
-  }, [location]);
+  }, [location, params]);
 
   return (
     <>

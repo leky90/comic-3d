@@ -9,10 +9,10 @@ import {
 } from 'three';
 import type { Comic as ComicEntity } from '../types/comic.model';
 import { Box, Sparkles, useCursor, useTexture } from '@react-three/drei';
-import useLocation from 'wouter/use-location';
 import { ROUTES } from '../constants/route.constant';
 import { Chapter } from './chapter';
 import { Text2d } from './text2d';
+import { useHashLocation } from '../hooks/use-hash-location';
 
 type ComicProps = MeshProps & {
   enabled: boolean;
@@ -34,7 +34,7 @@ export const Comic = memo(
     const groupRef = useRef<Group>(null);
     const boxRef = useRef<Mesh>(null);
     const [hovered, hover] = useState(false);
-    const [, setLocation] = useLocation();
+    const [, setLocation] = useHashLocation();
     const texture = useTexture(comic.thumbnail);
 
     useCursor(hovered);

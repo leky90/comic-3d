@@ -9,10 +9,18 @@ import { Controls } from './types/keyboard.type';
 import { useEffect, useMemo, useRef } from 'react';
 import { useHashLocation } from './hooks/use-hash-location';
 
+let isComicPage = false;
+
 export function App() {
   const [location, setLocation] = useHashLocation();
-  const [isComicPage, params] = useRoute(ROUTES['comics-page']);
-  const currentPage = useRef(params === null ? 1 : Number(params.page));
+  const firstAccess = useRef(true);
+  const [isBasePage] = useRoute(ROUTES.base);
+  const [matchedComicPage, params] = useRoute(ROUTES['comics-page']);
+  isComicPage = matchedComicPage;
+  const currentPage = useRef(
+    params === null || firstAccess.current ? 1 : Number(params.page)
+  );
+
   const { isSuccess } = useGetComicsByTypeQuery(
     {
       comicType: 'recent-update-comics',
@@ -34,7 +42,7 @@ export function App() {
   );
 
   function back() {
-    setLocation(ROUTES.base);
+    isComicPage ? setLocation(ROUTES.base) : window.history.back();
   }
 
   function setPage(page: number) {
@@ -71,9 +79,15 @@ export function App() {
     currentPage.current = params === null ? 1 : Number(params.page);
   }, [location, params]);
 
+  if (firstAccess.current && !isBasePage) {
+    setLocation(ROUTES['comics-page'].replace(':page', String(1)));
+  }
+
+  firstAccess.current = false;
+
   return (
     <>
-      {isComicPage && <QuickButtonsStage />}
+      <QuickButtonsStage />
       <KeyboardControls map={map} onChange={onPress}>
         {isSuccess && <AppContainer />}
       </KeyboardControls>

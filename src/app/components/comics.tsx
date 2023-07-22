@@ -20,6 +20,7 @@ export function Comics() {
   const groupRef = useRef<Group>(null);
   const [comics, setComics] = useState<ComicEntity[]>([]);
   const [matchedComics, params] = useRoute(ROUTES['comics-page']);
+  const [matchedDetailComics] = useRoute(ROUTES['detail-comic']);
   const currentPage = params === null ? 1 : Number(params.page);
   const realPage = Math.ceil((currentPage + 1) / 3);
 
@@ -83,7 +84,15 @@ export function Comics() {
       realPage,
     ]);
     const newComics = cachedData?.data.comics ?? [];
-    setComics((comics) => comics.concat(newComics));
+
+    setComics((comics) =>
+      comics.concat(
+        newComics.filter(
+          (newComic) =>
+            comics.findIndex((comic) => comic.id === newComic.id) < 0
+        )
+      )
+    );
   }, [realPage]);
 
   useEffect(() => {
@@ -147,8 +156,12 @@ export function Comics() {
       variants={variants}
       transition={{ type: 'spring', duration: 0.5 }}
     >
-      <group ref={groupRef} position={[0, 6, 0]} visible={matchedComics}>
-        <RecentComicsHeading page={currentPage} />
+      <group
+        ref={groupRef}
+        position={[0, 6, 0]}
+        visible={matchedComics || matchedDetailComics}
+      >
+        <RecentComicsHeading page={currentPage} visible={matchedComics} />
         {allComics}
       </group>
     </motion.group>

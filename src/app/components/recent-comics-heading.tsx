@@ -8,11 +8,14 @@ import { useHashLocation } from '../hooks/use-hash-location';
 import { ROUND_SPACE_Y } from '../constants/app.constant';
 import { animate } from 'framer-motion';
 
-type RecentComicsHeadingProps = { page: number };
+type RecentComicsHeadingProps = { page: number; visible?: boolean };
 
 const BASE_HEADING_Y = 14;
 
-export function RecentComicsHeading({ page }: RecentComicsHeadingProps) {
+export function RecentComicsHeading({
+  page,
+  visible,
+}: RecentComicsHeadingProps) {
   const groupRef = useRef<Group>(null);
   const [, setLocation] = useHashLocation();
   const [hovered, hover] = useState(false);
@@ -51,6 +54,7 @@ export function RecentComicsHeading({ page }: RecentComicsHeadingProps) {
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
       position={[0, BASE_HEADING_Y, -30]}
+      visible={visible}
     >
       <SpriteAnimator
         scale={[3, 3, 3]}

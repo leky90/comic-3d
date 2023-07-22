@@ -38,7 +38,7 @@ export function EntryComicHeading() {
     <motion.group
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
-      onClick={onClick}
+      onDoubleClick={onClick}
       position={[0, 1, 0]}
       visible={location === ROUTES.base}
       initial={'bounce'}
@@ -67,8 +67,11 @@ export function EntryComicHeading() {
         position={[-1.5, -2, 0]}
         className={location === ROUTES.base ? 'show' : 'hide'}
       >
-        <div className="text-white" style={{ width: 230 }}>
-          (Enter or Click)
+        <div className="text-white hide-mb" style={{ width: 360 }}>
+          (Enter or Double Click)
+        </div>
+        <div className="text-white hide show-mb" style={{ width: 200 }}>
+          (Double Tap)
         </div>
       </Html>
       <motion.group variants={textVariants}>

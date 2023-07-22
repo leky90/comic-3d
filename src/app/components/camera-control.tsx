@@ -5,19 +5,25 @@ import { Quaternion, Vector3 } from 'three';
 import { ROUTES } from '../constants/route.constant';
 import { ROUND_SPACE_Y } from '../constants/app.constant';
 import { useHashLocation } from '../hooks/use-hash-location';
+import { useRoute } from 'wouter';
 
 type CameraControlProps = {
   position?: Vector3;
   quaternion?: Quaternion;
 };
 
+const currentPosition = new Vector3(0, 0, 2);
+const focusPosition = new Vector3(0, 0, 0);
+
 export function CameraControl({
   position = new Vector3(0, 2, 10),
   quaternion = new Quaternion(),
 }: CameraControlProps) {
   const firstAccess = useRef(true);
-  const { controls } = useThree();
+  const { controls, scene } = useThree();
   const [location] = useHashLocation();
+  const [, params] = useRoute(ROUTES['detail-comic']);
+  const comicId = params?.id;
 
   const changeCameraPosition = useCallback(
     function (location: string) {
@@ -25,31 +31,52 @@ export function CameraControl({
 
       if (!cameraControls) return;
 
-      switch (location.replace(/[0-9]+$/, ':page')) {
-        case ROUTES.comics:
-          cameraControls.moveTo(0, 2, 0, true);
-          break;
-        case ROUTES['comics-page']: {
-          const matched = location.match(/[0-9]+$/);
-          const page = matched ? matched[0] : 1;
-
-          cameraControls.moveTo(
-            0,
-            (Number(page) - 1) * ROUND_SPACE_Y + 6,
-            0,
-            true
-          );
-          break;
-        }
-        default:
-          cameraControls.moveTo(0, 2, 15, true);
-          break;
-      }
-
       cameraControls.azimuthAngle = 0;
       cameraControls.polarAngle = 1.6;
+
+      if (location === ROUTES.comics) {
+        cameraControls.moveTo(0, 2, 0, true);
+        return;
+      }
+
+      if (location.replace(/[0-9]+$/, ':page') === ROUTES['comics-page']) {
+        const matched = location.match(/[0-9]+$/);
+        const page = matched ? matched[0] : 1;
+
+        cameraControls.moveTo(
+          0,
+          (Number(page) - 1) * ROUND_SPACE_Y + 6,
+          0,
+          true
+        );
+
+        return;
+      }
+
+      if (location.replace(/[a-zA-Z-]+$/, ':id') === ROUTES['detail-comic']) {
+        if (!comicId) return;
+
+        const active = scene.getObjectByName(comicId);
+
+        if (active?.parent) {
+          const cameraControls = controls as unknown as CameraControls;
+
+          active.parent.localToWorld(currentPosition.set(0, 0.5, 12));
+          active.parent.localToWorld(focusPosition.set(0, 0, -2));
+
+          cameraControls?.setLookAt(
+            ...currentPosition.toArray(),
+            ...focusPosition.toArray(),
+            true
+          );
+        }
+
+        return;
+      }
+
+      cameraControls.moveTo(0, 2, 15, true);
     },
-    [controls]
+    [comicId, controls, scene]
   );
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { MeshProps, ThreeEvent } from '@react-three/fiber';
+import { MeshProps, ThreeEvent, useThree } from '@react-three/fiber';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Group,
@@ -8,12 +8,19 @@ import {
   Vector3,
 } from 'three';
 import type { Comic as ComicEntity } from '../types/comic.model';
-import { Box, useCursor, useTexture } from '@react-three/drei';
+import {
+  Box,
+  MeshPortalMaterial,
+  useCursor,
+  useTexture,
+} from '@react-three/drei';
 import { ROUTES } from '../constants/route.constant';
 import { Chapter } from './chapter';
 import { Text2d } from './text2d';
 import { useHashLocation } from '../hooks/use-hash-location';
 import { motion } from 'framer-motion-3d';
+import { useRoute } from 'wouter';
+import { animate } from 'framer-motion';
 
 type ComicProps = MeshProps & {
   enabled: boolean;
@@ -22,7 +29,7 @@ type ComicProps = MeshProps & {
 
 const CENTER_POINT = new Vector3(0, 0, 0);
 const DEFAULT_POSITION = [0, 100, 0] as unknown as Vector3;
-const BOX_COLOR_MATERIAL = new MeshPhongMaterial({ color: '#FFC300' });
+const BOX_COLOR_MATERIAL = new MeshPhongMaterial({ color: '#f0f0f0' });
 
 export const Comic = memo(
   function ({
@@ -32,21 +39,40 @@ export const Comic = memo(
     comic,
   }: ComicProps) {
     const basePosition = position as Vector3;
+    const portalRef = useRef<MeshPortalMaterial>();
     const groupRef = useRef<Group>(null);
     const boxRef = useRef<Mesh>(null);
+    const textureMaterialRef = useRef<MeshLambertMaterial>();
+    const { scene } = useThree();
     const [hovered, hover] = useState(false);
     const [, setLocation] = useHashLocation();
     const texture = useTexture(comic.thumbnail);
+    const [matchedDetailComic, params] = useRoute(ROUTES['detail-comic']);
+    const comicId = params?.id;
+    const activeComic = scene.getObjectByName(comicId || '');
+    const isVisible = enabled || (activeComic && activeComic.name === comic.id);
 
     useCursor(hovered);
 
     useEffect(() => {
-      if (!boxRef.current || !enabled) return;
+      if (!boxRef.current || !isVisible) return;
 
-      boxRef.current.material = new MeshLambertMaterial({
+      textureMaterialRef.current = new MeshLambertMaterial({
         map: texture,
       });
-    }, [texture, enabled]);
+
+      boxRef.current.material = textureMaterialRef.current;
+    }, [texture, isVisible]);
+
+    useEffect(() => {
+      if (!boxRef.current || !textureMaterialRef.current) return;
+
+      if (matchedDetailComic) {
+        return;
+      } else {
+        boxRef.current.material = textureMaterialRef.current;
+      }
+    }, [matchedDetailComic, texture]);
 
     useEffect(() => {
       if (!groupRef.current) return;
@@ -77,9 +103,33 @@ export const Comic = memo(
       [comic.id, comic.lastest_chapters]
     );
 
-    function onClick(e: ThreeEvent<MouseEvent>) {
+    function onDoubleClick(e: ThreeEvent<MouseEvent>) {
       e.stopPropagation();
-      setLocation(ROUTES['detail-comic'].replace(':id', comic.id));
+
+      if (!boxRef.current) return;
+
+      if (matchedDetailComic) {
+        let rotationY = Math.PI;
+        if (boxRef.current.rotation.y === Math.PI) {
+          rotationY = 0;
+        }
+        animate(boxRef.current.rotation.y, rotationY, {
+          duration: 1,
+          onUpdate(latest) {
+            if (!boxRef.current) return;
+            if (latest > Math.PI / 2) {
+              boxRef.current.material = BOX_COLOR_MATERIAL;
+            } else {
+              boxRef.current.material = new MeshLambertMaterial({
+                map: texture,
+              });
+            }
+            boxRef.current.rotation.y = latest;
+          },
+        });
+      } else {
+        setLocation(ROUTES['detail-comic'].replace(':id', comic.id));
+      }
     }
 
     function onPointerEnter(e: ThreeEvent<MouseEvent>) {
@@ -102,26 +152,42 @@ export const Comic = memo(
         position={[basePosition.x, basePosition.y, basePosition.z]}
         rotation={rotation}
         ref={groupRef}
-        visible={enabled}
+        visible={isVisible}
       >
         <motion.group
           variants={boxVariants}
           initial={'idle'}
-          animate={hovered ? 'hovered' : 'idle'}
+          animate={hovered && !matchedDetailComic ? 'hovered' : 'idle'}
         >
-          <Text2d visible={enabled} position={[0, -6, 2] as unknown as Vector3}>
-            {comic.title.slice(0, 24)} {comic.title.length > 24 && '...'}
+          <Text2d
+            visible={isVisible}
+            position={[0, -6, 2] as unknown as Vector3}
+          >
+            {matchedDetailComic ? (
+              comic.title
+            ) : (
+              <>
+                {comic.title.slice(0, 24)} {comic.title.length > 24 && '...'}
+              </>
+            )}
+
             <meshPhongMaterial color="#FFC300" />
           </Text2d>
+
           <Box
             ref={boxRef}
             args={[7.35, 10, 1]}
-            onClick={onClick}
+            name={comic.id}
+            onDoubleClick={onDoubleClick}
             onPointerOver={onPointerEnter}
             onPointerOut={handlePointerLeave}
             material={BOX_COLOR_MATERIAL}
           />
-          <Text2d visible={enabled} position={[0, 6, 2] as unknown as Vector3}>
+
+          <Text2d
+            visible={isVisible}
+            position={[0, 6, 2] as unknown as Vector3}
+          >
             {comic.updated_at}
             <meshPhongMaterial color="royalblue" />
           </Text2d>

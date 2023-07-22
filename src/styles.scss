@@ -2,15 +2,22 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: #191920;
+  background-color: transparent;
 }
 
-.hide {
-  display: none;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.show {
-  display: block;
+canvas {
+  opacity: 0;
+  touch-action: none;
+  animation: fade-in 5s ease 1s forwards;
 }
 
 .text-white {
@@ -20,9 +27,7 @@ body {
   font-size: 32px;
   color: white;
   font-weight: bold;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
+  text-align: center;
 }
 
 .comic-info {
@@ -101,6 +106,14 @@ body {
   transform: translateX(-50%);
 }
 
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
 @media screen and (max-width: 768px) {
   .rotate-a,
   .rotate-d {
@@ -108,7 +121,7 @@ body {
   }
 
   .show-mb {
-    display: list-item;
+    display: block;
   }
 
   .hide-mb {

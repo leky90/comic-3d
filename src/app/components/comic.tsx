@@ -8,12 +8,7 @@ import {
   Vector3,
 } from 'three';
 import type { Comic as ComicEntity } from '../types/comic.model';
-import {
-  Box,
-  MeshPortalMaterial,
-  useCursor,
-  useTexture,
-} from '@react-three/drei';
+import { Box, useCursor, useTexture } from '@react-three/drei';
 import { ROUTES } from '../constants/route.constant';
 import { Chapter } from './chapter';
 import { Text2d } from './text2d';
@@ -39,7 +34,6 @@ export const Comic = memo(
     comic,
   }: ComicProps) {
     const basePosition = position as Vector3;
-    const portalRef = useRef<MeshPortalMaterial>();
     const groupRef = useRef<Group>(null);
     const boxRef = useRef<Mesh>(null);
     const textureMaterialRef = useRef<MeshLambertMaterial>();

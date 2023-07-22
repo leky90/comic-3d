@@ -61,6 +61,20 @@ body {
   cursor: pointer;
 }
 
+.box-center {
+  position: fixed;
+  max-width: 90vw;
+  width: max-content;
+  background-color: rgba(#000000, 0.5);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .rotate-a {
   left: 10px;
   top: 50%;
@@ -85,4 +99,19 @@ body {
   left: 50%;
   bottom: 10px;
   transform: translateX(-50%);
+}
+
+@media screen and (max-width: 768px) {
+  .rotate-a,
+  .rotate-d {
+    display: none;
+  }
+
+  .show-mb {
+    display: list-item;
+  }
+
+  .hide-mb {
+    display: none;
+  }
 }

@@ -15,8 +15,6 @@ export function ImageChapters({ images, enabled }: ImageChapterProps) {
     function (e: WheelEvent) {
       if (!scrollRef.current) return;
 
-      console.log(scrollData.el, scrollData.el.id);
-
       scrollData.el.scrollTo({
         left: 0,
         top: scrollData.el.scrollTop + e.deltaY,

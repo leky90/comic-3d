@@ -7,6 +7,9 @@ type ImageChapterProps = {
   enabled?: boolean;
 };
 
+let startY = 0;
+let moveY = 0;
+
 export function ImageChapters({ images, enabled }: ImageChapterProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollData = useScroll();
@@ -24,16 +27,50 @@ export function ImageChapters({ images, enabled }: ImageChapterProps) {
     [scrollData]
   );
 
+  const handleTouchMove = useCallback(function (event: TouchEvent) {
+    if (!scrollRef.current) return;
+
+    const touch = event.touches[0];
+    moveY = touch.clientY;
+
+    scrollData.el.scrollTop -= moveY - startY;
+
+    event.preventDefault();
+  }, []);
+
+  const handleTouchStart = useCallback(function (event: TouchEvent) {
+    const touch = event.touches[0];
+    startY = touch.clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback(function () {
+    startY = moveY = 0;
+  }, []);
+
   useEffect(() => {
     if (!scrollRef.current) return;
 
-    enabled && scrollRef.current.addEventListener('wheel', handleMouseWheel);
+    if (enabled) {
+      scrollRef.current.addEventListener('wheel', handleMouseWheel);
+      scrollRef.current.addEventListener('touchstart', handleTouchStart);
+      scrollRef.current.addEventListener('touchmove', handleTouchMove);
+      scrollRef.current.addEventListener('touchend', handleTouchEnd);
+    }
 
     // Clean up the event listener on component unmount
     return () => {
       scrollRef.current?.removeEventListener('wheel', handleMouseWheel);
+      scrollRef.current?.removeEventListener('touchstart', handleTouchStart);
+      scrollRef.current?.removeEventListener('touchmove', handleTouchMove);
+      scrollRef.current?.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [enabled, handleMouseWheel]);
+  }, [
+    enabled,
+    handleMouseWheel,
+    handleTouchEnd,
+    handleTouchMove,
+    handleTouchStart,
+  ]);
 
   return (
     <Scroll html ref={scrollRef}>

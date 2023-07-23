@@ -74,9 +74,9 @@ export function CameraControl({
             ...focusPosition.toArray(),
             true
           );
-          cameraControls.minDistance = 13;
-          cameraControls.maxDistance = 13;
-          cameraControls.distance = 13;
+          cameraControls.minDistance = 16;
+          cameraControls.maxDistance = 16;
+          cameraControls.distance = 16;
         }
 
         return;

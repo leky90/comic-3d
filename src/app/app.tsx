@@ -16,6 +16,7 @@ export function App() {
   const firstAccess = useRef(true);
   const [isBasePage] = useRoute(ROUTES.base);
   const [matchedComicPage, params] = useRoute(ROUTES['comics-page']);
+  const [isDetailComicChapter] = useRoute(ROUTES['detail-comic-chapter']);
   isComicPage = matchedComicPage;
   const currentPage = useRef(
     params === null || firstAccess.current ? 1 : Number(params.page)
@@ -79,7 +80,7 @@ export function App() {
     currentPage.current = params === null ? 1 : Number(params.page);
   }, [location, params]);
 
-  if (firstAccess.current && !isBasePage) {
+  if (firstAccess.current && !isBasePage && !isDetailComicChapter) {
     setLocation(ROUTES['comics-page'].replace(':page', String(1)));
   }
 

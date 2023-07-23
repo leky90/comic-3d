@@ -33,3 +33,34 @@ export interface Genre {
   id: string;
   name: string;
 }
+
+export interface DetailComic {
+  title: string;
+  thumbnail: string;
+  description: string;
+  authors: string[];
+  status: string;
+  genres: Genre[];
+  total_views: number;
+  average: number;
+  rating_count: number;
+  followers: number;
+  chapters: Chapter[];
+  id: string;
+  is_adult: boolean;
+  other_names: string[];
+}
+
+export interface DetailComicChapter {
+  images: Image[];
+  chapters: Chapter[];
+  chapter_name: string;
+  comic_name: string;
+}
+
+export interface Image {
+  page: number;
+  src: string;
+  backup_url_1: string;
+  backup_url_2: string;
+}

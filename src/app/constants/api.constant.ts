@@ -1,1 +1,2 @@
-export const BASE_API_HOSTNAME = 'https://comics-api.vercel.app';
+export const BASE_API_HOSTNAME =
+  import.meta.env['VITE_API'] ?? 'http://localhost:8080';

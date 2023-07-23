@@ -4,7 +4,6 @@ import { ROUTES } from '../constants/route.constant';
 import { useRoute } from 'wouter';
 
 export function SceneBackground() {
-  const [isBase] = useRoute(ROUTES.base);
   const [isDetailComic] = useRoute(ROUTES['detail-comic']);
   return (
     <>

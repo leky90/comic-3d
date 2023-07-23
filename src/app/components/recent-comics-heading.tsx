@@ -10,7 +10,7 @@ import { animate } from 'framer-motion';
 
 type RecentComicsHeadingProps = { page: number; visible?: boolean };
 
-const BASE_HEADING_Y = 14;
+const BASE_HEADING_Y = 15;
 
 export function RecentComicsHeading({
   page,

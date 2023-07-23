@@ -33,6 +33,9 @@ export function CameraControl({
 
       cameraControls.azimuthAngle = 0;
       cameraControls.polarAngle = 1.6;
+      cameraControls.minDistance = 0.01;
+      cameraControls.maxDistance = 0.01;
+      cameraControls.distance = 0.01;
 
       if (location === ROUTES.comics) {
         cameraControls.moveTo(0, 2, 0, true);
@@ -53,7 +56,9 @@ export function CameraControl({
         return;
       }
 
-      if (location.replace(/[a-zA-Z-]+$/, ':id') === ROUTES['detail-comic']) {
+      if (
+        location.replace(/[a-zA-Z0-9-]+$/, ':id') === ROUTES['detail-comic']
+      ) {
         if (!comicId) return;
 
         const active = scene.getObjectByName(comicId);
@@ -69,6 +74,9 @@ export function CameraControl({
             ...focusPosition.toArray(),
             true
           );
+          cameraControls.minDistance = 13;
+          cameraControls.maxDistance = 13;
+          cameraControls.distance = 13;
         }
 
         return;
@@ -102,6 +110,8 @@ export function CameraControl({
         polarAngle={1.6}
         minPolarAngle={1}
         maxPolarAngle={2}
+        minZoom={1}
+        maxZoom={1}
         // minAzimuthAngle={-0.5}
         // maxAzimuthAngle={0.5}
         // azimuthAngle={0}

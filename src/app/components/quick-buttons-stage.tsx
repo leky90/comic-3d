@@ -10,6 +10,7 @@ export function QuickButtonsStage() {
   const [accepted, setAccepted] = useState(defaultAccept);
   const [matchedComics, params] = useRoute(ROUTES['comics-page']);
   const [matchedDetailComic] = useRoute(ROUTES['detail-comic']);
+  const [matchedDetailComicChapter] = useRoute(ROUTES['detail-comic-chapter']);
   const currentPage = params === null ? 1 : Number(params.page);
 
   function back() {
@@ -84,7 +85,7 @@ export function QuickButtonsStage() {
           <button className={`rotate-d white-button `}>(D) &rarr;</button>
         </>
       )}
-      {(matchedDetailComic || matchedComics) && (
+      {(matchedDetailComic || matchedComics || matchedDetailComicChapter) && (
         <button onClick={back} className="back-button">
           (Esc)
         </button>

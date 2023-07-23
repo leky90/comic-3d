@@ -27,15 +27,17 @@ export function Comics() {
   const handleMouseWheel = useCallback((event: WheelEvent) => {
     if (!groupRef.current) return;
 
-    const deltaY = Math.sign(event.deltaY);
-
-    animate(groupRef.current.rotation.y, groupRef.current.rotation.y + deltaY, {
-      duration: 3,
-      onUpdate(latest) {
-        if (!groupRef.current) return;
-        groupRef.current.rotation.y = latest;
-      },
-    });
+    animate(
+      groupRef.current.rotation.y,
+      groupRef.current.rotation.y + event.deltaY / 2000,
+      {
+        duration: 0.5,
+        onUpdate(latest) {
+          if (!groupRef.current) return;
+          groupRef.current.rotation.y = latest;
+        },
+      }
+    );
   }, []);
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -79,6 +81,16 @@ export function Comics() {
   }, []);
 
   useEffect(() => {
+    window.addEventListener('keypress', handleKeyPress);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      if (groupRef.current) groupRef.current.rotation.y = 0;
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [handleKeyPress, matchedComics]);
+
+  useEffect(() => {
     const cachedData = queryClient.getQueryData<AxiosResponse<ComicsResponse>>([
       'recent-update-comics',
       realPage,
@@ -96,24 +108,14 @@ export function Comics() {
   }, [realPage]);
 
   useEffect(() => {
-    window.addEventListener('wheel', handleMouseWheel);
+    matchedComics && window.addEventListener('wheel', handleMouseWheel);
 
     // Clean up the event listener on component unmount
     return () => {
       if (groupRef.current) groupRef.current.rotation.y = 0;
       window.removeEventListener('wheel', handleMouseWheel);
     };
-  }, [handleMouseWheel, matchedComics]);
-
-  useEffect(() => {
-    window.addEventListener('keypress', handleKeyPress);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      if (groupRef.current) groupRef.current.rotation.y = 0;
-      window.removeEventListener('keypress', handleKeyPress);
-    };
-  }, [handleKeyPress, matchedComics]);
+  }, [handleMouseWheel, matchedComics, matchedDetailComics]);
 
   const allComics = useMemo(() => {
     return comics.map((comic, index) => {

@@ -118,6 +118,21 @@ export function CameraControl({
         dollySpeed={1}
         makeDefault
       />
+      {/* <OrbitControls
+        minDistance={0.01}
+        maxDistance={0.01}
+        // distance={0.01}
+        // polarAngle={1.6}
+        minPolarAngle={1}
+        maxPolarAngle={2}
+        // dollySpeed={1}
+        minZoom={1}
+        maxZoom={1}
+        // minAzimuthAngle={-0.5}
+        // maxAzimuthAngle={0.5}
+        // azimuthAngle={0}
+        makeDefault
+      /> */}
     </>
   );
 }
